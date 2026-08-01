@@ -52,3 +52,6 @@
   - Derivar periodo mostrado desde datos reales y mejorar estrategia de errores.
 - Prioridad 5: elevar cobertura de pruebas.
   - Agregar pruebas negativas y de validacion para endpoints y clientes.
+
+### Habilidad Adicional: Performance (`addyosmani/web-quality-skills@performance`)
+* **Justificación:** Los dashboards financieros manejan constantes renderizados de datos y gráficos interactivos. La habilidad de rendimiento nos ayuda a identificar re-renders innecesarios, optimizar la carga de módulos pesados y garantizar métricas sólidas de Core Web Vitals en la interfaz.
