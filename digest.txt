@@ -1,0 +1,2823 @@
+Directory structure:
+└── mariascamino-ai-eng-financial-dashboard-context-project/
+    ├── README.es.md
+    ├── README.md
+    ├── AGENTS.md
+    ├── context.md
+    ├── docker-compose.yml
+    ├── backend/
+    │   ├── Dockerfile
+    │   ├── requirements.txt
+    │   ├── app/
+    │   │   ├── __init__.py
+    │   │   ├── main.py
+    │   │   └── routes.py
+    │   └── tests/
+    │       ├── conftest.py
+    │       └── test_routes.py
+    ├── frontend/
+    │   ├── components.json
+    │   ├── Dockerfile
+    │   ├── eslint.config.js
+    │   ├── index.html
+    │   ├── package.json
+    │   ├── tsconfig.app.json
+    │   ├── tsconfig.json
+    │   ├── tsconfig.node.json
+    │   ├── vite.config.ts
+    │   ├── .env.example
+    │   └── src/
+    │       ├── App.tsx
+    │       ├── index.css
+    │       ├── main.tsx
+    │       ├── components/
+    │       │   ├── dashboard/
+    │       │   │   ├── dashboard-header.tsx
+    │       │   │   ├── income-outcome-chart.tsx
+    │       │   │   ├── kpi-card.tsx
+    │       │   │   ├── kpi-row.tsx
+    │       │   │   └── profit-percent-chart.tsx
+    │       │   └── ui/
+    │       │       ├── card.tsx
+    │       │       └── skeleton.tsx
+    │       └── lib/
+    │           ├── financial-types.ts
+    │           ├── financial-utils.test.ts
+    │           ├── financial-utils.ts
+    │           ├── mock-data.ts
+    │           └── utils.ts
+    ├── memory-bank/
+    │   ├── productContext.md
+    │   ├── progress.md
+    │   └── techContext.md
+    └── .agents/
+        └── rules/
+            ├── api-collection-pagination.md
+            ├── backend-endpoint-composition.md
+            ├── backend-randomness-and-state.md
+            ├── frontend-error-handling.md
+            ├── frontend-period-consistency.md
+            ├── security-cors.md
+            ├── testing-negative-cases.md
+            └── typed-contract-alignment.md
+
+================================================
+FILE: README.es.md
+================================================
+# Panel de Métricas Financieras
+
+<!-- hide -->
+
+Por [@marcogonzalo](https://github.com/marcogonzalo) y [otros contribuidores](https://github.com/4GeeksAcademy/ai-eng-financial-dashboard-context-project/graphs/contributors) en [4Geeks Academy](https://4geeksacademy.com/)
+
+[![build by developers](https://img.shields.io/badge/build_by-Developers-blue)](https://4geeks.com)
+[![4Geeks Academy](https://img.shields.io/twitter/follow/4geeksacademy?style=social&logo=x)](https://x.com/4geeksacademy)
+
+_These instructions are [available in English](./README.md)._
+
+**Antes de empezar**: 📗 [Lee las instrucciones](https://4geeks.com/es/lesson/como-comenzar-un-proyecto-de-codificacion) sobre cómo comenzar un proyecto de programación.
+
+<!-- endhide -->
+
+---
+
+_Dashboard de métricas financieras con frontend en React + TypeScript y backend en FastAPI._
+
+## Pasos recomendados
+
+1. Haz un fork de este repositorio a tu cuenta.
+2. Abre tu fork en GitHub Codespaces o clónalo y ejecútalo en tu entorno local.
+3. Ejecuta tu agente de IA para inspeccionar frontend y backend.
+4. Documenta las reglas propuestas y el banco de memoria en tu fork.
+5. Ajusta y valida las reglas hasta que sean aplicables al flujo real del proyecto.
+
+## Estructura esperada del directorio para agentes
+
+```text
+./.agents
+└─ /rules
+   └─ <nombre-regla>.md
+└─ /skills
+   └─ /<nombre-skill>
+      └─ /SKILL.md
+```
+
+## Cómo ejecutar en local
+
+```bash
+docker compose up --build
+```
+
+El frontend usa por defecto el proxy de Vite para `/api`, así que no necesitas variables de entorno extra ni en desarrollo local ni en Codespaces.
+Si necesitas apuntar a otro backend, copia `frontend/.env.example` como `.env` y define `VITE_API_BASE_URL`.
+
+- Frontend: http://localhost:5173
+- Backend: http://localhost:8000
+- Documentación API: http://localhost:8000/docs
+
+---
+
+Este y muchos otros proyectos son construidos por estudiantes como parte de los [Coding Bootcamps](https://4geeksacademy.com/) de 4Geeks Academy. Encuentra más acerca de los [cursos](https://4geeksacademy.com/es/comparar-programas) de [Ingeniería de IA](https://4geeksacademy.com/es/coding-bootcamps/ingenieria-ia), [Data Science & Machine Learning](https://4geeksacademy.com/es/coding-bootcamps/curso-datascience-machine-learning), [Ciberseguridad](https://4geeksacademy.com/es/coding-bootcamps/curso-ciberseguridad) y [Full-Stack Software Developer con IA](https://4geeksacademy.com/es/coding-bootcamps/programador-full-stack).
+
+
+
+================================================
+FILE: README.md
+================================================
+# Financial Metrics Dashboard
+
+<!-- hide -->
+
+By [@marcogonzalo](https://github.com/marcogonzalo) and [other contributors](https://github.com/4GeeksAcademy/ai-eng-financial-dashboard-context-project/graphs/contributors) at [4Geeks Academy](https://4geeksacademy.com/)
+
+[![build by developers](https://img.shields.io/badge/build_by-Developers-blue)](https://4geeks.com)
+[![4Geeks Academy](https://img.shields.io/twitter/follow/4geeksacademy?style=social&logo=x)](https://x.com/4geeksacademy)
+
+_Estas instrucciones están [disponibles en español](./README.es.md)._
+
+**Before you start**: 📗 [Read the instructions](https://4geeks.com/lesson/how-to-start-a-project) on how to start a coding project.
+
+<!-- endhide -->
+
+---
+
+_Financial metrics dashboard with a React + TypeScript frontend and a FastAPI backend._
+
+## Recommended steps
+
+1. Fork this repository to your account.
+2. Open your fork in GitHub Codespaces or clone it and run it in your local environment.
+3. Run your AI agent to inspect both frontend and backend.
+4. Document the proposed rules and memory bank in your fork.
+5. Refine and validate the rules until they fit the project's real workflow.
+
+## Expected agents directory structure
+
+```text
+./.agents
+└─ /rules
+   └─ <rule-name>.md
+└─ /skills
+   └─ /<skill-name>
+      └─ /SKILL.md
+```
+
+## How to run locally
+
+```bash
+docker compose up --build
+```
+
+The frontend uses the Vite proxy for `/api` by default, so no extra environment variables are required in local development or Codespaces.
+If you need to target a different backend origin, copy `frontend/.env.example` to `.env` and set `VITE_API_BASE_URL`.
+
+- Frontend: http://localhost:5173
+- Backend: http://localhost:8000
+- API documentation: http://localhost:8000/docs
+
+---
+
+This and many other projects are built by students as part of the [Career Programs](https://4geeksacademy.com/compare-programs) at [4Geeks Academy](https://4geeksacademy.com). By [@marcogonzalo](https://github.com/marcogonzalo) and [other contributors](https://github.com/4GeeksAcademy/ai-eng-financial-dashboard-context-project/graphs/contributors). Find out more about [AI Engineering](https://4geeksacademy.com/en/coding-bootcamps/ai-engineering), [Data Science & Machine Learning](https://4geeksacademy.com/en/coding-bootcamps/data-science-ml), [Cybersecurity](https://4geeksacademy.com/en/coding-bootcamps/cybersecurity) and [Full-Stack Software Developer with AI](https://4geeksacademy.com/en/coding-bootcamps/full-stack-developer).
+
+
+
+================================================
+FILE: AGENTS.md
+================================================
+# Agent Guidance
+
+Agents working on this project **must**:
+
+- Look for **work instructions and rules** in the directory:  
+  `./.agents/rules`
+
+- Look for available **agent skills** in the directory:  
+  `./.agents/skills`
+
+- Look for the **project memory bank** in:  
+  `./memory-bank`  
+  _(if the directory exists)_
+
+Before taking action (analyzing code, modifying files, or generating outputs), always review the latest files in these locations to ensure compliance with project conventions, context, and operational constraints.
+
+
+
+================================================
+FILE: context.md
+================================================
+# context.task
+- Realizar handover tecnico de la aplicacion Financial Dashboard con evidencia directa del codigo.
+- Describir arquitectura, entry points, servicios, contratos API e infraestructura sin asumir funcionalidades no implementadas.
+- Contrastar implementacion real con documentacion existente para explicitar discrepancias.
+
+# context
+- Proyecto full-stack con frontend React 19 + TypeScript (Vite) y backend FastAPI.
+- El frontend implementa una SPA de una sola pantalla (sin router), con estado local y una unica llamada HTTP a GET /api/metrics.
+- El backend expone multiples endpoints de metricas, pero genera datos mock en memoria en cada request (seed fija) y no utiliza base de datos persistente.
+- Ejecucion local prevista mediante Docker Compose, con frontend en 5173 y backend en 8000 (debugpy en 5678).
+
+## repository structure and entry points
+- Raiz:
+  - AGENTS.md
+  - README.md y README.es.md
+  - docker-compose.yml
+  - backend/
+  - frontend/
+- Backend:
+  - backend/app/main.py: crea FastAPI, configura CORS abierto e incluye router.
+  - backend/app/routes.py: define modelos Pydantic, funciones de negocio y endpoints.
+  - backend/tests/test_routes.py: valida endpoints y funciones clave.
+  - backend/requirements.txt y backend/Dockerfile.
+- Frontend:
+  - frontend/src/main.tsx: bootstrap con createRoot y render de App.
+  - frontend/src/App.tsx: fetch de datos, estados loading/error y composicion del dashboard.
+  - frontend/src/components/dashboard/: KPIs y graficos (Recharts).
+  - frontend/src/lib/: tipos, transformaciones y formatters.
+  - frontend/vite.config.ts, frontend/package.json, frontend/Dockerfile, frontend/.env.example.
+
+## architecture and services
+- Frontend:
+  - Framework y build: React + TypeScript + Vite.
+  - Estado: useState/useEffect; no Redux, Zustand ni Context global.
+  - Renderizado: cliente, una sola vista.
+  - API: GET /api/metrics desde App; VITE_API_BASE_URL opcional.
+  - Proxy dev: /api -> http://backend:8000 en Vite.
+- Backend:
+  - Framework: FastAPI + Pydantic.
+  - Runtime: uvicorn con debugpy en Docker.
+  - Persistencia: no hay DB/ORM/conexion externa.
+  - Endpoints:
+    - GET /health
+    - GET /api/metrics
+    - GET /api/metrics/facets
+    - GET /api/metrics/summary
+    - GET /api/metrics/categories/top
+    - GET /api/metrics/comparison
+    - GET /api/metrics/alerts
+    - GET /api/metrics/b2b
+    - GET /api/metrics/b2c
+- Infraestructura y entorno:
+  - docker-compose.yml define servicios frontend y backend con volumenes y puertos.
+  - frontend/.env.example documenta VITE_API_BASE_URL como override opcional.
+  - Scripts frontend: dev, build, lint, preview, test, test:watch, test:coverage.
+
+# output context
+## codebase evidence
+- Archivos revisados para respaldar este contexto:
+  - README.md
+  - README.es.md
+  - docker-compose.yml
+  - AGENTS.md
+  - backend/app/main.py
+  - backend/app/routes.py
+  - backend/tests/test_routes.py
+  - backend/tests/conftest.py
+  - backend/requirements.txt
+  - backend/Dockerfile
+  - frontend/package.json
+  - frontend/vite.config.ts
+  - frontend/Dockerfile
+  - frontend/.env.example
+  - frontend/index.html
+  - frontend/src/main.tsx
+  - frontend/src/App.tsx
+  - frontend/src/index.css
+  - frontend/src/lib/financial-types.ts
+  - frontend/src/lib/financial-utils.ts
+  - frontend/src/lib/financial-utils.test.ts
+  - frontend/src/components/dashboard/dashboard-header.tsx
+  - frontend/src/components/dashboard/kpi-row.tsx
+  - frontend/src/components/dashboard/kpi-card.tsx
+  - frontend/src/components/dashboard/income-outcome-chart.tsx
+  - frontend/src/components/dashboard/profit-percent-chart.tsx
+
+## corrections and discrepancies
+- AGENTS.md indica revisar .agents y memory-bank, pero esos directorios no existen en el estado actual del repositorio.
+- La UI solo integra GET /api/metrics; los endpoints adicionales del backend existen y tienen cobertura de tests, pero no estan conectados al frontend.
+- No hay router frontend ni navegacion multi-vista.
+- No existe base de datos real: la data es sintetica y generada por request.
+- El periodo mostrado en la UI esta hardcodeado como 2024 - Full Year, mientras la logica del backend calcula fechas relativas al dia actual.
+
+
+
+================================================
+FILE: docker-compose.yml
+================================================
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+      - "5678:5678"
+    volumes:
+      - ./backend:/app
+
+
+
+================================================
+FILE: backend/Dockerfile
+================================================
+FROM python:3.13-slim
+
+WORKDIR /app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+EXPOSE 8000 5678
+
+CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+
+
+================================================
+FILE: backend/requirements.txt
+================================================
+fastapi
+uvicorn[standard]
+debugpy
+pytest
+pytest-cov
+httpx
+
+
+
+================================================
+FILE: backend/app/__init__.py
+================================================
+# Marks app as a package for imports in tests and runtime.
+
+
+
+================================================
+FILE: backend/app/main.py
+================================================
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.routes import router
+
+app = FastAPI(title="Financial Metrics API")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+app.include_router(router)
+
+
+
+================================================
+FILE: backend/app/routes.py
+================================================
+from __future__ import annotations
+
+import random
+from collections import defaultdict
+from datetime import date, timedelta
+from typing import Literal
+
+from fastapi import APIRouter, Query
+from pydantic import BaseModel
+
+OperationType = Literal["income", "outcome"]
+Category = Literal["suppliers", "sales",
+                   "operational", "administrative", "others"]
+BusinessType = Literal["B2B", "B2C"]
+GroupBy = Literal["day", "week", "month"]
+
+OUTCOME_CATEGORIES = ["suppliers", "operational", "administrative", "others"]
+
+router = APIRouter()
+
+
+class FinancialMovement(BaseModel):
+    create_date: date
+    amount: float
+    operation_type: OperationType
+    category: Category
+    business_type: BusinessType
+
+
+class MetricsFacets(BaseModel):
+    operation_types: list[OperationType]
+    business_types: list[BusinessType]
+    categories: list[Category]
+    min_date: date
+    max_date: date
+
+
+class MetricsSummaryItem(BaseModel):
+    period: str
+    income: float
+    outcome: float
+    net: float
+
+
+class TopCategoryItem(BaseModel):
+    category: Category
+    operation_type: OperationType
+    total_amount: float
+
+
+class MetricsComparison(BaseModel):
+    current_period: float
+    previous_period: float
+    delta_abs: float
+    delta_pct: float | None
+
+
+class MetricsAlert(BaseModel):
+    period: str
+    outcome_total: float
+    baseline_average: float
+    increase_ratio: float
+
+
+def _year_for_month(month: int, today: date) -> int:
+    if month < today.month:
+        return today.year
+    return today.year - 1
+
+
+def _build_movement(month: int, income_probability: float, today: date) -> FinancialMovement:
+    operation_type: OperationType = "income" if random.random(
+    ) < income_probability else "outcome"
+    movement_day = random.randint(1, 28)
+    movement_date = date(_year_for_month(month, today), month, movement_day)
+    business_type: BusinessType = "B2B" if random.random() < 0.55 else "B2C"
+
+    if operation_type == "income":
+        category: Category = "sales" if random.random() < 0.9 else "others"
+        amount = round(random.uniform(800, 12000), 2)
+    else:
+        category = random.choice(OUTCOME_CATEGORIES)
+        amount = round(random.uniform(500, 9000), 2)
+
+    return FinancialMovement(
+        create_date=movement_date,
+        amount=amount,
+        operation_type=operation_type,
+        category=category,
+        business_type=business_type,
+    )
+
+
+def generate_mock_movements(seed: int | None = None) -> list[FinancialMovement]:
+    if seed is not None:
+        random.seed(seed)
+    today = date.today()
+    movements: list[FinancialMovement] = []
+    for month in range(1, 13):
+        income_probability = random.uniform(0.45, 0.7)
+        for _ in range(30):
+            movements.append(_build_movement(month, income_probability, today))
+    movements.sort(key=lambda item: item.create_date)
+    return movements
+
+
+def filter_movements_by_date(
+    movements: list[FinancialMovement],
+    start_date: date | None,
+    end_date: date | None,
+) -> list[FinancialMovement]:
+    if start_date is None and end_date is None:
+        return movements
+
+    filtered = movements
+    if start_date is not None:
+        filtered = [
+            movement for movement in filtered if movement.create_date >= start_date]
+    if end_date is not None:
+        filtered = [
+            movement for movement in filtered if movement.create_date <= end_date]
+    return filtered
+
+
+def filter_movements(
+    movements: list[FinancialMovement],
+    start_date: date | None,
+    end_date: date | None,
+    category: Category | None,
+    operation_type: OperationType | None,
+) -> list[FinancialMovement]:
+    filtered = filter_movements_by_date(movements, start_date, end_date)
+    if category is not None:
+        filtered = [
+            movement for movement in filtered if movement.category == category
+        ]
+    if operation_type is not None:
+        filtered = [
+            movement
+            for movement in filtered
+            if movement.operation_type == operation_type
+        ]
+    return filtered
+
+
+def ensure_chronological_order(movements: list[FinancialMovement]) -> list[FinancialMovement]:
+    return sorted(movements, key=lambda item: item.create_date)
+
+
+def build_metrics_facets(movements: list[FinancialMovement]) -> MetricsFacets:
+    ordered = ensure_chronological_order(movements)
+    return MetricsFacets(
+        operation_types=sorted({item.operation_type for item in ordered}),
+        business_types=sorted({item.business_type for item in ordered}),
+        categories=sorted({item.category for item in ordered}),
+        min_date=ordered[0].create_date,
+        max_date=ordered[-1].create_date,
+    )
+
+
+def summarize_movements(
+    movements: list[FinancialMovement],
+    group_by: GroupBy,
+) -> list[MetricsSummaryItem]:
+    summary_map: dict[str, dict[str, float]] = defaultdict(
+        lambda: {"income": 0.0, "outcome": 0.0}
+    )
+    for movement in movements:
+        if group_by == "day":
+            key = movement.create_date.isoformat()
+        elif group_by == "week":
+            iso_year, iso_week, _ = movement.create_date.isocalendar()
+            key = f"{iso_year}-W{iso_week:02d}"
+        else:
+            key = movement.create_date.strftime("%Y-%m")
+
+        summary_map[key][movement.operation_type] += movement.amount
+
+    return [
+        MetricsSummaryItem(
+            period=period,
+            income=round(values["income"], 2),
+            outcome=round(values["outcome"], 2),
+            net=round(values["income"] - values["outcome"], 2),
+        )
+        for period, values in sorted(summary_map.items(), key=lambda item: item[0])
+    ]
+
+
+def build_top_categories(
+    movements: list[FinancialMovement],
+    operation_type: OperationType,
+    limit: int,
+) -> list[TopCategoryItem]:
+    totals: dict[Category, float] = defaultdict(float)
+    for movement in movements:
+        if movement.operation_type == operation_type:
+            totals[movement.category] += movement.amount
+
+    ordered = sorted(totals.items(), key=lambda item: item[1], reverse=True)
+    return [
+        TopCategoryItem(
+            category=category,
+            operation_type=operation_type,
+            total_amount=round(total_amount, 2),
+        )
+        for category, total_amount in ordered[:limit]
+    ]
+
+
+def calculate_net_value(movements: list[FinancialMovement]) -> float:
+    income = sum(
+        item.amount for item in movements if item.operation_type == "income")
+    outcome = sum(
+        item.amount for item in movements if item.operation_type == "outcome")
+    return round(income - outcome, 2)
+
+
+def detect_outcome_alerts(
+    summary: list[MetricsSummaryItem],
+    threshold: float,
+) -> list[MetricsAlert]:
+    alerts: list[MetricsAlert] = []
+    historical_outcomes: list[float] = []
+    for item in summary:
+        if historical_outcomes:
+            baseline = sum(historical_outcomes) / len(historical_outcomes)
+            if baseline > 0:
+                increase_ratio = (item.outcome - baseline) / baseline
+                if increase_ratio > threshold:
+                    alerts.append(
+                        MetricsAlert(
+                            period=item.period,
+                            outcome_total=round(item.outcome, 2),
+                            baseline_average=round(baseline, 2),
+                            increase_ratio=round(increase_ratio, 4),
+                        )
+                    )
+        historical_outcomes.append(item.outcome)
+    return alerts
+
+
+@router.get("/health")
+def health() -> dict[str, str]:
+    return {"status": "ok"}
+
+
+@router.get("/api/metrics", response_model=list[FinancialMovement])
+def get_metrics(
+    start_date: date | None = Query(default=None),
+    end_date: date | None = Query(default=None),
+    category: Category | None = Query(default=None),
+    operation_type: OperationType | None = Query(default=None),
+) -> list[FinancialMovement]:
+    movements = generate_mock_movements(seed=42)
+    filtered = filter_movements(
+        movements, start_date, end_date, category, operation_type
+    )
+    return ensure_chronological_order(filtered)
+
+
+@router.get("/api/metrics/facets", response_model=MetricsFacets)
+def get_metrics_facets() -> MetricsFacets:
+    movements = generate_mock_movements(seed=42)
+    return build_metrics_facets(movements)
+
+
+@router.get("/api/metrics/summary", response_model=list[MetricsSummaryItem])
+def get_metrics_summary(
+    group_by: GroupBy = Query(default="month"),
+    start_date: date | None = Query(default=None),
+    end_date: date | None = Query(default=None),
+    category: Category | None = Query(default=None),
+    operation_type: OperationType | None = Query(default=None),
+    business_type: BusinessType | None = Query(default=None),
+) -> list[MetricsSummaryItem]:
+    movements = generate_mock_movements(seed=42)
+    if business_type is not None:
+        movements = [
+            item for item in movements if item.business_type == business_type]
+    filtered = filter_movements(
+        movements, start_date, end_date, category, operation_type
+    )
+    return summarize_movements(filtered, group_by)
+
+
+@router.get("/api/metrics/categories/top", response_model=list[TopCategoryItem])
+def get_top_categories(
+    operation_type: OperationType = Query(default="outcome"),
+    limit: int = Query(default=5, ge=1, le=20),
+    start_date: date | None = Query(default=None),
+    end_date: date | None = Query(default=None),
+    business_type: BusinessType | None = Query(default=None),
+) -> list[TopCategoryItem]:
+    movements = generate_mock_movements(seed=42)
+    if business_type is not None:
+        movements = [
+            item for item in movements if item.business_type == business_type]
+    filtered = filter_movements(
+        movements, start_date, end_date, category=None, operation_type=operation_type
+    )
+    return build_top_categories(filtered, operation_type, limit)
+
+
+@router.get("/api/metrics/comparison", response_model=MetricsComparison)
+def get_metrics_comparison(
+    start_date: date = Query(...),
+    end_date: date = Query(...),
+    business_type: BusinessType | None = Query(default=None),
+) -> MetricsComparison:
+    movements = generate_mock_movements(seed=42)
+    if business_type is not None:
+        movements = [
+            item for item in movements if item.business_type == business_type]
+
+    current_movements = filter_movements(
+        movements, start_date, end_date, category=None, operation_type=None
+    )
+    current_net = calculate_net_value(current_movements)
+
+    duration = end_date - start_date
+    previous_end = start_date - timedelta(days=1)
+    previous_start = previous_end - duration
+    previous_movements = filter_movements(
+        movements, previous_start, previous_end, category=None, operation_type=None
+    )
+    previous_net = calculate_net_value(previous_movements)
+
+    delta_abs = round(current_net - previous_net, 2)
+    delta_pct = None
+    if previous_net != 0:
+        delta_pct = round((delta_abs / abs(previous_net)) * 100, 2)
+
+    return MetricsComparison(
+        current_period=current_net,
+        previous_period=previous_net,
+        delta_abs=delta_abs,
+        delta_pct=delta_pct,
+    )
+
+
+@router.get("/api/metrics/alerts", response_model=list[MetricsAlert])
+def get_metrics_alerts(
+    threshold: float = Query(default=0.3, ge=0),
+    group_by: GroupBy = Query(default="month"),
+    start_date: date | None = Query(default=None),
+    end_date: date | None = Query(default=None),
+    business_type: BusinessType | None = Query(default=None),
+) -> list[MetricsAlert]:
+    movements = generate_mock_movements(seed=42)
+    if business_type is not None:
+        movements = [
+            item for item in movements if item.business_type == business_type]
+
+    filtered = filter_movements(
+        movements, start_date, end_date, category=None, operation_type=None
+    )
+    summary = summarize_movements(filtered, group_by)
+    return detect_outcome_alerts(summary, threshold)
+
+
+@router.get("/api/metrics/b2b", response_model=list[FinancialMovement])
+def get_b2b_metrics(
+    start_date: date | None = Query(default=None),
+    end_date: date | None = Query(default=None),
+    category: Category | None = Query(default=None),
+    operation_type: OperationType | None = Query(default=None),
+) -> list[FinancialMovement]:
+    movements = [
+        movement for movement in generate_mock_movements(seed=42) if movement.business_type == "B2B"
+    ]
+    filtered = filter_movements(
+        movements, start_date, end_date, category, operation_type
+    )
+    return ensure_chronological_order(filtered)
+
+
+@router.get("/api/metrics/b2c", response_model=list[FinancialMovement])
+def get_b2c_metrics(
+    start_date: date | None = Query(default=None),
+    end_date: date | None = Query(default=None),
+    category: Category | None = Query(default=None),
+    operation_type: OperationType | None = Query(default=None),
+) -> list[FinancialMovement]:
+    movements = [
+        movement for movement in generate_mock_movements(seed=42) if movement.business_type == "B2C"
+    ]
+    filtered = filter_movements(
+        movements, start_date, end_date, category, operation_type
+    )
+    return ensure_chronological_order(filtered)
+
+
+
+================================================
+FILE: backend/tests/conftest.py
+================================================
+import sys
+from pathlib import Path
+
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+if str(ROOT_DIR) not in sys.path:
+    sys.path.insert(0, str(ROOT_DIR))
+
+
+
+================================================
+FILE: backend/tests/test_routes.py
+================================================
+from datetime import date
+
+from fastapi.testclient import TestClient
+
+from app.main import app
+from app.routes import filter_movements_by_date, generate_mock_movements
+
+
+client = TestClient(app)
+
+
+def test_generate_mock_movements_returns_full_year_sorted_data():
+    movements = generate_mock_movements(seed=42)
+
+    assert len(movements) == 360
+    assert movements == sorted(movements, key=lambda item: item.create_date)
+
+
+def test_filter_movements_by_date_includes_range_edges():
+    movements = generate_mock_movements(seed=42)
+    target_date = movements[0].create_date
+
+    filtered = filter_movements_by_date(movements, target_date, target_date)
+
+    assert filtered
+    assert all(movement.create_date == target_date for movement in filtered)
+
+
+def test_health_endpoint_returns_ok():
+    response = client.get("/health")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+
+
+def test_metrics_endpoint_respects_date_filters():
+    base_response = client.get("/api/metrics")
+    assert base_response.status_code == 200
+    first_date = base_response.json()[0]["create_date"]
+
+    response = client.get(
+        "/api/metrics",
+        params={"start_date": first_date, "end_date": first_date},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload
+    assert all(item["create_date"] == first_date for item in payload)
+
+
+def test_b2b_endpoint_only_returns_b2b_records():
+    response = client.get("/api/metrics/b2b")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload
+    assert all(item["business_type"] == "B2B" for item in payload)
+    assert payload == sorted(payload, key=lambda item: item["create_date"])
+
+
+def test_b2c_endpoint_only_returns_b2c_records():
+    response = client.get("/api/metrics/b2c")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload
+    assert all(item["business_type"] == "B2C" for item in payload)
+    assert payload == sorted(payload, key=lambda item: item["create_date"])
+
+
+def test_metrics_endpoint_filters_by_category():
+    response = client.get("/api/metrics", params={"category": "sales"})
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload
+    assert all(item["category"] == "sales" for item in payload)
+
+
+def test_metrics_endpoint_filters_by_operation_type():
+    response = client.get("/api/metrics", params={"operation_type": "income"})
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload
+    assert all(item["operation_type"] == "income" for item in payload)
+
+
+def test_b2b_endpoint_combines_new_filters():
+    response = client.get(
+        "/api/metrics/b2b",
+        params={"operation_type": "outcome", "category": "suppliers"},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload
+    assert all(item["business_type"] == "B2B" for item in payload)
+    assert all(item["operation_type"] == "outcome" for item in payload)
+    assert all(item["category"] == "suppliers" for item in payload)
+
+
+def test_metrics_facets_returns_filter_options_and_date_range():
+    response = client.get("/api/metrics/facets")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert sorted(payload["operation_types"]) == ["income", "outcome"]
+    assert payload["business_types"] == ["B2B", "B2C"]
+    assert payload["categories"] == [
+        "administrative",
+        "operational",
+        "others",
+        "sales",
+        "suppliers",
+    ]
+    assert payload["min_date"] <= payload["max_date"]
+
+
+def test_metrics_summary_by_month_returns_balances():
+    response = client.get("/api/metrics/summary", params={"group_by": "month"})
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload
+    first = payload[0]
+    assert set(first.keys()) == {"period", "income", "outcome", "net"}
+    assert all(item["income"] >= 0 for item in payload)
+    assert all(item["outcome"] >= 0 for item in payload)
+
+
+def test_metrics_summary_by_week_honors_business_type_filter():
+    response = client.get(
+        "/api/metrics/summary",
+        params={"group_by": "week", "business_type": "B2C"},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload
+
+
+def test_top_categories_returns_limited_sorted_categories():
+    response = client.get(
+        "/api/metrics/categories/top",
+        params={"operation_type": "outcome", "limit": 3},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert len(payload) == 3
+    assert payload[0]["total_amount"] >= payload[1]["total_amount"]
+    assert all(item["operation_type"] == "outcome" for item in payload)
+
+
+def test_metrics_comparison_returns_delta_fields():
+    response = client.get(
+        "/api/metrics/comparison",
+        params={"start_date": "2025-03-01", "end_date": "2025-03-31"},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert set(payload.keys()) == {
+        "current_period",
+        "previous_period",
+        "delta_abs",
+        "delta_pct",
+    }
+
+
+def test_metrics_alerts_returns_anomaly_candidates():
+    response = client.get(
+        "/api/metrics/alerts",
+        params={"threshold": 0.2, "group_by": "month"},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert isinstance(payload, list)
+    if payload:
+        first = payload[0]
+        assert set(first.keys()) == {
+            "period",
+            "outcome_total",
+            "baseline_average",
+            "increase_ratio",
+        }
+
+
+
+================================================
+FILE: frontend/components.json
+================================================
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/index.css",
+    "baseColor": "zinc",
+    "cssVariables": false,
+    "prefix": ""
+  },
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils",
+    "ui": "@/components/ui",
+    "lib": "@/lib",
+    "hooks": "@/hooks"
+  }
+}
+
+
+
+================================================
+FILE: frontend/Dockerfile
+================================================
+FROM node:24-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+EXPOSE 5173
+
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"]
+
+
+
+================================================
+FILE: frontend/eslint.config.js
+================================================
+import js from "@eslint/js";
+import globals from "globals";
+import reactHooks from "eslint-plugin-react-hooks";
+import reactRefresh from "eslint-plugin-react-refresh";
+import tseslint from "typescript-eslint";
+import { defineConfig, globalIgnores } from "eslint/config";
+
+export default defineConfig([
+  globalIgnores(["dist", "coverage"]),
+  {
+    files: ["**/*.{ts,tsx}"],
+    extends: [
+      js.configs.recommended,
+      tseslint.configs.recommended,
+      reactHooks.configs.flat.recommended,
+      reactRefresh.configs.vite,
+    ],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+    },
+  },
+]);
+
+
+
+================================================
+FILE: frontend/index.html
+================================================
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>frontend</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
+
+
+================================================
+FILE: frontend/package.json
+================================================
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.8.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "recharts": "^3.8.1",
+    "tailwind-merge": "^3.5.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/node": "^24.12.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "@vitest/coverage-v8": "^4.1.4",
+    "autoprefixer": "^10.4.27",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.4.0",
+    "postcss": "^8.5.9",
+    "tailwindcss": "^4.2.2",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.58.0",
+    "vite": "^8.0.4",
+    "vitest": "^4.1.4"
+  }
+}
+
+
+
+================================================
+FILE: frontend/tsconfig.app.json
+================================================
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "esnext",
+    "types": ["vite/client"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"]
+}
+
+
+
+================================================
+FILE: frontend/tsconfig.json
+================================================
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}
+
+
+
+================================================
+FILE: frontend/tsconfig.node.json
+================================================
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["ES2023"],
+    "module": "esnext",
+    "types": ["node"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["vite.config.ts"]
+}
+
+
+
+================================================
+FILE: frontend/vite.config.ts
+================================================
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import path from "node:path";
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+  server: {
+    host: "0.0.0.0",
+    proxy: {
+      "/api": {
+        target: "http://backend:8000",
+        changeOrigin: true,
+      },
+    },
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+});
+
+
+
+================================================
+FILE: frontend/.env.example
+================================================
+# Optional override for the backend base URL.
+# In local development and Codespaces, the Vite proxy already forwards /api to the backend.
+# Use this only when you need the frontend to call a different backend origin.
+VITE_API_BASE_URL=
+
+
+================================================
+FILE: frontend/src/App.tsx
+================================================
+import { useEffect, useState } from "react";
+import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+import { KPIRow } from "@/components/dashboard/kpi-row";
+import { IncomeOutcomeChart } from "@/components/dashboard/income-outcome-chart";
+import { ProfitPercentChart } from "@/components/dashboard/profit-percent-chart";
+import {
+  type FinancialMovement,
+  type KPIMetrics,
+  type MonthlyDataPoint,
+} from "@/lib/financial-types";
+import { computeKPIs, computeMonthlyData } from "@/lib/financial-utils";
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
+
+async function fetchFinancialData(): Promise<FinancialMovement[]> {
+  const response = await fetch(`${API_BASE_URL}/api/metrics`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch financial data: ${response.status}`);
+  }
+  return response.json();
+}
+
+function App() {
+  const [metrics, setMetrics] = useState<KPIMetrics | null>(null);
+  const [monthlyData, setMonthlyData] = useState<MonthlyDataPoint[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchFinancialData()
+      .then((movements) => {
+        setMetrics(computeKPIs(movements));
+        setMonthlyData(computeMonthlyData(movements));
+      })
+      .catch(() => {
+        setError(
+          "No se pudo cargar la informacion financiera. Revisa la API de backend.",
+        );
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  return (
+    <main className="dark min-h-screen bg-background text-foreground">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-8">
+          <DashboardHeader period="2024 - Full Year" />
+
+          {error ? (
+            <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive-foreground">
+              {error}
+            </div>
+          ) : null}
+
+          <section aria-label="Key performance indicators">
+            <KPIRow metrics={metrics} loading={loading} />
+          </section>
+
+          <section
+            aria-label="Financial charts"
+            className="grid grid-cols-1 gap-4 xl:grid-cols-2"
+          >
+            <IncomeOutcomeChart data={monthlyData} loading={loading} />
+            <ProfitPercentChart data={monthlyData} loading={loading} />
+          </section>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+export default App;
+
+
+
+================================================
+FILE: frontend/src/index.css
+================================================
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: oklch(0.97 0.005 240);
+  --foreground: oklch(0.15 0.01 240);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.01 240);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.01 240);
+  --primary: oklch(0.55 0.2 255);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.93 0.01 240);
+  --secondary-foreground: oklch(0.2 0.01 240);
+  --muted: oklch(0.93 0.01 240);
+  --muted-foreground: oklch(0.5 0.01 240);
+  --accent: oklch(0.93 0.01 240);
+  --accent-foreground: oklch(0.2 0.01 240);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.88 0.01 240);
+  --input: oklch(0.88 0.01 240);
+  --ring: oklch(0.55 0.2 255);
+  --chart-income: oklch(0.55 0.2 255);
+  --chart-outcome: oklch(0.65 0.18 30);
+  --chart-profit: oklch(0.6 0.16 160);
+  --chart-1: oklch(0.55 0.2 255);
+  --chart-2: oklch(0.65 0.18 30);
+  --chart-3: oklch(0.6 0.16 160);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.627 0.265 303.9);
+  --radius: 0.75rem;
+  --income-badge: oklch(0.93 0.06 155);
+  --income-badge-fg: oklch(0.35 0.12 155);
+  --outcome-badge: oklch(0.95 0.06 25);
+  --outcome-badge-fg: oklch(0.42 0.15 27);
+  --profit-badge: oklch(0.93 0.04 255);
+  --profit-badge-fg: oklch(0.38 0.15 255);
+}
+
+.dark {
+  --background: oklch(0.13 0.01 240);
+  --foreground: oklch(0.94 0.005 240);
+  --card: oklch(0.18 0.012 240);
+  --card-foreground: oklch(0.94 0.005 240);
+  --popover: oklch(0.18 0.012 240);
+  --popover-foreground: oklch(0.94 0.005 240);
+  --primary: oklch(0.6 0.2 255);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.24 0.015 240);
+  --secondary-foreground: oklch(0.94 0.005 240);
+  --muted: oklch(0.24 0.015 240);
+  --muted-foreground: oklch(0.62 0.01 240);
+  --accent: oklch(0.24 0.015 240);
+  --accent-foreground: oklch(0.94 0.005 240);
+  --destructive: oklch(0.45 0.18 27);
+  --destructive-foreground: oklch(0.94 0.005 240);
+  --border: oklch(0.26 0.015 240);
+  --input: oklch(0.26 0.015 240);
+  --ring: oklch(0.6 0.2 255);
+  --chart-income: oklch(0.62 0.2 255);
+  --chart-outcome: oklch(0.68 0.18 30);
+  --chart-profit: oklch(0.65 0.16 160);
+  --chart-1: oklch(0.62 0.2 255);
+  --chart-2: oklch(0.68 0.18 30);
+  --chart-3: oklch(0.65 0.16 160);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.627 0.265 303.9);
+  --income-badge: oklch(0.25 0.08 155);
+  --income-badge-fg: oklch(0.72 0.16 155);
+  --outcome-badge: oklch(0.25 0.07 25);
+  --outcome-badge-fg: oklch(0.72 0.16 27);
+  --profit-badge: oklch(0.22 0.05 255);
+  --profit-badge-fg: oklch(0.72 0.16 255);
+}
+
+@theme inline {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+
+
+================================================
+FILE: frontend/src/main.tsx
+================================================
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.tsx'
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+
+
+
+================================================
+FILE: frontend/src/components/dashboard/dashboard-header.tsx
+================================================
+import { LayoutDashboard } from 'lucide-react'
+
+interface DashboardHeaderProps {
+  period?: string
+}
+
+export function DashboardHeader({ period = '2024 — Full Year' }: DashboardHeaderProps) {
+  return (
+    <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="flex items-center gap-3">
+        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <LayoutDashboard size={18} />
+        </span>
+        <div>
+          <h1 className="text-xl font-semibold text-foreground tracking-tight">Financial Overview</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">Executive metrics dashboard</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <span className="inline-flex items-center rounded-full border border-border bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
+          {period}
+        </span>
+      </div>
+    </header>
+  )
+}
+
+
+
+================================================
+FILE: frontend/src/components/dashboard/income-outcome-chart.tsx
+================================================
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { type MonthlyDataPoint } from '@/lib/financial-types'
+import { formatCurrency } from '@/lib/financial-utils'
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts'
+
+interface IncomeOutcomeChartProps {
+  data: MonthlyDataPoint[]
+  loading?: boolean
+}
+
+interface TooltipPayload {
+  name: string
+  value: number
+  color: string
+}
+
+interface CustomTooltipProps {
+  active?: boolean
+  payload?: TooltipPayload[]
+  label?: string
+}
+
+function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
+  if (!active || !payload?.length) return null
+  return (
+    <div className="rounded-lg border border-border bg-card px-4 py-3 shadow-lg text-sm">
+      <p className="font-semibold text-foreground mb-2">{label}</p>
+      {payload.map((entry) => (
+        <div key={entry.name} className="flex items-center gap-2 py-0.5">
+          <span className="inline-block h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
+          <span className="text-muted-foreground capitalize">{entry.name}:</span>
+          <span className="font-medium text-foreground ml-auto pl-4">{formatCurrency(entry.value)}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export function IncomeOutcomeChart({ data, loading }: IncomeOutcomeChartProps) {
+  if (loading) {
+    return (
+      <Card className="border-border/60">
+        <CardHeader className="pb-4">
+          <Skeleton className="h-5 w-52" />
+          <Skeleton className="h-3 w-64 mt-1" />
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-[280px] w-full rounded-lg" />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  const hasData = data.some((d) => d.income > 0 || d.outcome > 0)
+
+  return (
+    <Card className="border-border/60">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-base font-semibold">Income vs. Outcome</CardTitle>
+        <CardDescription>Monthly revenue and expenditure evolution</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {!hasData ? (
+          <div className="flex h-[280px] items-center justify-center text-muted-foreground text-sm">
+            No data available to display
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={280}>
+            <LineChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" strokeOpacity={0.6} />
+              <XAxis
+                dataKey="month"
+                tick={{ fontSize: 12, fill: 'var(--color-muted-foreground)' }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                tick={{ fontSize: 11, fill: 'var(--color-muted-foreground)' }}
+                axisLine={false}
+                tickLine={false}
+                tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+                width={48}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend
+                formatter={(value) => (
+                  <span className="text-xs text-muted-foreground capitalize">{value}</span>
+                )}
+              />
+              <Line
+                type="monotone"
+                dataKey="income"
+                name="income"
+                stroke="var(--chart-income)"
+                strokeWidth={2}
+                dot={{ r: 3, fill: 'var(--chart-income)', strokeWidth: 0 }}
+                activeDot={{ r: 5, strokeWidth: 0 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="outcome"
+                name="outcome"
+                stroke="var(--chart-outcome)"
+                strokeWidth={2}
+                dot={{ r: 3, fill: 'var(--chart-outcome)', strokeWidth: 0 }}
+                activeDot={{ r: 5, strokeWidth: 0 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+
+
+================================================
+FILE: frontend/src/components/dashboard/kpi-card.tsx
+================================================
+import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
+import { type LucideIcon } from 'lucide-react'
+
+interface KPICardProps {
+  label: string
+  value: string
+  helperText: string
+  icon: LucideIcon
+  variant: 'income' | 'outcome' | 'profit' | 'profitPercent'
+  loading?: boolean
+}
+
+const variantStyles: Record<KPICardProps['variant'], { badge: string; icon: string }> = {
+  income: {
+    badge: 'bg-[var(--income-badge)] text-[var(--income-badge-fg)]',
+    icon: 'text-[var(--income-badge-fg)]',
+  },
+  outcome: {
+    badge: 'bg-[var(--outcome-badge)] text-[var(--outcome-badge-fg)]',
+    icon: 'text-[var(--outcome-badge-fg)]',
+  },
+  profit: {
+    badge: 'bg-[var(--profit-badge)] text-[var(--profit-badge-fg)]',
+    icon: 'text-[var(--profit-badge-fg)]',
+  },
+  profitPercent: {
+    badge: 'bg-[var(--profit-badge)] text-[var(--profit-badge-fg)]',
+    icon: 'text-[var(--profit-badge-fg)]',
+  },
+}
+
+export function KPICard({ label, value, helperText, icon: Icon, variant, loading }: KPICardProps) {
+  const styles = variantStyles[variant]
+
+  if (loading) {
+    return (
+      <Card className="border-border/60">
+        <CardContent className="p-6 flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-4 w-28" />
+            <Skeleton className="h-8 w-8 rounded-lg" />
+          </div>
+          <Skeleton className="h-8 w-36" />
+          <Skeleton className="h-3 w-44" />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  return (
+    <Card className="border-border/60 hover:border-border transition-colors">
+      <CardContent className="p-6 flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-muted-foreground tracking-wide uppercase text-pretty">
+            {label}
+          </span>
+          <span className={cn('p-1.5 rounded-lg', styles.badge)}>
+            <Icon size={16} className={styles.icon} />
+          </span>
+        </div>
+        <p className="text-3xl font-semibold tracking-tight text-foreground">{value}</p>
+        <p className="text-xs text-muted-foreground leading-relaxed">{helperText}</p>
+      </CardContent>
+    </Card>
+  )
+}
+
+
+
+================================================
+FILE: frontend/src/components/dashboard/kpi-row.tsx
+================================================
+import { KPICard } from './kpi-card'
+import { type KPIMetrics } from '@/lib/financial-types'
+import { formatCurrency, formatPercent } from '@/lib/financial-utils'
+import { TrendingUp, TrendingDown, DollarSign, BarChart2 } from 'lucide-react'
+
+interface KPIRowProps {
+  metrics: KPIMetrics | null
+  loading?: boolean
+}
+
+export function KPIRow({ metrics, loading }: KPIRowProps) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <KPICard
+        label="Total Income"
+        value={metrics ? formatCurrency(metrics.totalIncome) : '—'}
+        helperText="Cumulative revenue from all income movements"
+        icon={TrendingUp}
+        variant="income"
+        loading={loading}
+      />
+      <KPICard
+        label="Total Outcome"
+        value={metrics ? formatCurrency(metrics.totalOutcome) : '—'}
+        helperText="Total expenditure across all categories"
+        icon={TrendingDown}
+        variant="outcome"
+        loading={loading}
+      />
+      <KPICard
+        label="Profit"
+        value={metrics ? formatCurrency(metrics.profit) : '—'}
+        helperText="Net profit — income minus total outcome"
+        icon={DollarSign}
+        variant="profit"
+        loading={loading}
+      />
+      <KPICard
+        label="Profit Margin"
+        value={metrics ? formatPercent(metrics.profitPercent) : '—'}
+        helperText="Profit as a percentage of total income"
+        icon={BarChart2}
+        variant="profitPercent"
+        loading={loading}
+      />
+    </div>
+  )
+}
+
+
+
+================================================
+FILE: frontend/src/components/dashboard/profit-percent-chart.tsx
+================================================
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { type MonthlyDataPoint } from '@/lib/financial-types'
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ReferenceLine,
+  ResponsiveContainer,
+} from 'recharts'
+
+interface ProfitPercentChartProps {
+  data: MonthlyDataPoint[]
+  loading?: boolean
+}
+
+interface TooltipPayload {
+  name: string
+  value: number
+  color: string
+}
+
+interface CustomTooltipProps {
+  active?: boolean
+  payload?: TooltipPayload[]
+  label?: string
+}
+
+function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
+  if (!active || !payload?.length) return null
+  const value = payload[0]?.value ?? 0
+  return (
+    <div className="rounded-lg border border-border bg-card px-4 py-3 shadow-lg text-sm">
+      <p className="font-semibold text-foreground mb-1">{label}</p>
+      <div className="flex items-center gap-2">
+        <span
+          className="inline-block h-2 w-2 rounded-full"
+          style={{ backgroundColor: 'var(--chart-profit)' }}
+        />
+        <span className="text-muted-foreground">Profit margin:</span>
+        <span className="font-medium text-foreground ml-auto pl-4">{value.toFixed(1)}%</span>
+      </div>
+    </div>
+  )
+}
+
+export function ProfitPercentChart({ data, loading }: ProfitPercentChartProps) {
+  if (loading) {
+    return (
+      <Card className="border-border/60">
+        <CardHeader className="pb-4">
+          <Skeleton className="h-5 w-52" />
+          <Skeleton className="h-3 w-64 mt-1" />
+        </CardHeader>
+        <CardContent>
+          <Skeleton className="h-[280px] w-full rounded-lg" />
+        </CardContent>
+      </Card>
+    )
+  }
+
+  const hasData = data.some((d) => d.profitPercent !== 0)
+
+  return (
+    <Card className="border-border/60">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-base font-semibold">Profit Margin %</CardTitle>
+        <CardDescription>Monthly profit as a percentage of total income</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {!hasData ? (
+          <div className="flex h-[280px] items-center justify-center text-muted-foreground text-sm">
+            No data available to display
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={280}>
+            <LineChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" strokeOpacity={0.6} />
+              <XAxis
+                dataKey="month"
+                tick={{ fontSize: 12, fill: 'var(--color-muted-foreground)' }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                tick={{ fontSize: 11, fill: 'var(--color-muted-foreground)' }}
+                axisLine={false}
+                tickLine={false}
+                tickFormatter={(v) => `${v.toFixed(0)}%`}
+                width={40}
+                domain={['auto', 'auto']}
+              />
+              <ReferenceLine y={0} stroke="var(--color-border)" strokeDasharray="4 4" />
+              <Tooltip content={<CustomTooltip />} />
+              <Line
+                type="monotone"
+                dataKey="profitPercent"
+                name="profitPercent"
+                stroke="var(--chart-profit)"
+                strokeWidth={2}
+                dot={{ r: 3, fill: 'var(--chart-profit)', strokeWidth: 0 }}
+                activeDot={{ r: 5, strokeWidth: 0 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
+
+
+
+================================================
+FILE: frontend/src/components/ui/card.tsx
+================================================
+import * as React from 'react'
+
+import { cn } from '@/lib/utils'
+
+function Card({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="card"
+      className={cn(
+        'bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm',
+        className,
+      )}
+      {...props}
+    />
+  )
+}
+
+function CardHeader({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="card-header"
+      className={cn(
+        '@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6',
+        className,
+      )}
+      {...props}
+    />
+  )
+}
+
+function CardTitle({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="card-title"
+      className={cn('leading-none font-semibold', className)}
+      {...props}
+    />
+  )
+}
+
+function CardDescription({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="card-description"
+      className={cn('text-muted-foreground text-sm', className)}
+      {...props}
+    />
+  )
+}
+
+function CardAction({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="card-action"
+      className={cn(
+        'col-start-2 row-span-2 row-start-1 self-start justify-self-end',
+        className,
+      )}
+      {...props}
+    />
+  )
+}
+
+function CardContent({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="card-content"
+      className={cn('px-6', className)}
+      {...props}
+    />
+  )
+}
+
+function CardFooter({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="card-footer"
+      className={cn('flex items-center px-6 [.border-t]:pt-6', className)}
+      {...props}
+    />
+  )
+}
+
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardAction,
+  CardDescription,
+  CardContent,
+}
+
+
+
+================================================
+FILE: frontend/src/components/ui/skeleton.tsx
+================================================
+import { cn } from '@/lib/utils'
+
+function Skeleton({ className, ...props }: React.ComponentProps<'div'>) {
+  return (
+    <div
+      data-slot="skeleton"
+      className={cn('bg-accent animate-pulse rounded-md', className)}
+      {...props}
+    />
+  )
+}
+
+export { Skeleton }
+
+
+
+================================================
+FILE: frontend/src/lib/financial-types.ts
+================================================
+export type OperationType = 'income' | 'outcome'
+export type Category = 'suppliers' | 'sales' | 'operational' | 'administrative' | 'others'
+export type BusinessType = 'B2B' | 'B2C'
+
+export interface FinancialMovement {
+  create_date: string // ISO date
+  amount: number
+  operation_type: OperationType
+  category: Category
+  business_type: BusinessType
+}
+
+export interface KPIMetrics {
+  totalIncome: number
+  totalOutcome: number
+  profit: number
+  profitPercent: number
+}
+
+export interface MonthlyDataPoint {
+  month: string
+  income: number
+  outcome: number
+  profitPercent: number
+}
+
+
+
+================================================
+FILE: frontend/src/lib/financial-utils.test.ts
+================================================
+import { describe, expect, it } from "vitest";
+
+import {
+  computeKPIs,
+  computeMonthlyData,
+  formatCurrency,
+  formatPercent,
+} from "./financial-utils";
+import type { FinancialMovement } from "./financial-types";
+
+const sampleMovements: FinancialMovement[] = [
+  {
+    create_date: "2024-01-10",
+    amount: 1000,
+    operation_type: "income",
+    category: "sales",
+    business_type: "B2B",
+  },
+  {
+    create_date: "2024-01-15",
+    amount: 250,
+    operation_type: "outcome",
+    category: "suppliers",
+    business_type: "B2B",
+  },
+  {
+    create_date: "2024-02-01",
+    amount: 500,
+    operation_type: "income",
+    category: "sales",
+    business_type: "B2C",
+  },
+];
+
+describe("computeKPIs", () => {
+  it("calculates totals and profit values", () => {
+    const metrics = computeKPIs(sampleMovements);
+
+    expect(metrics).toEqual({
+      totalIncome: 1500,
+      totalOutcome: 250,
+      profit: 1250,
+      profitPercent: (1250 / 1500) * 100,
+    });
+  });
+
+  it("returns 0 profitPercent when there is no income", () => {
+    const onlyOutcomes: FinancialMovement[] = [
+      {
+        create_date: "2024-03-05",
+        amount: 350,
+        operation_type: "outcome",
+        category: "operational",
+        business_type: "B2B",
+      },
+    ];
+
+    const metrics = computeKPIs(onlyOutcomes);
+    expect(metrics.profitPercent).toBe(0);
+  });
+});
+
+describe("computeMonthlyData", () => {
+  it("returns chronological year-month points with aggregated totals", () => {
+    const unsortedCrossYearMovements: FinancialMovement[] = [
+      {
+        create_date: "2026-01-08",
+        amount: 300,
+        operation_type: "income",
+        category: "sales",
+        business_type: "B2C",
+      },
+      {
+        create_date: "2025-12-05",
+        amount: 200,
+        operation_type: "outcome",
+        category: "operational",
+        business_type: "B2B",
+      },
+      {
+        create_date: "2025-12-03",
+        amount: 1000,
+        operation_type: "income",
+        category: "sales",
+        business_type: "B2B",
+      },
+    ];
+    const monthlyData = computeMonthlyData(unsortedCrossYearMovements);
+
+    expect(monthlyData).toHaveLength(2);
+    expect(monthlyData[0]).toEqual({
+      month: "Dec 2025",
+      income: 1000,
+      outcome: 200,
+      profitPercent: 80,
+    });
+    expect(monthlyData[1]).toEqual({
+      month: "Jan 2026",
+      income: 300,
+      outcome: 0,
+      profitPercent: 100,
+    });
+  });
+});
+
+describe("formatters", () => {
+  it("formats currency without decimals", () => {
+    expect(formatCurrency(1234.56)).toBe("$1,235");
+  });
+
+  it("formats percent with one decimal", () => {
+    expect(formatPercent(15.555)).toBe("15.6%");
+  });
+});
+
+
+
+================================================
+FILE: frontend/src/lib/financial-utils.ts
+================================================
+import {
+  type FinancialMovement,
+  type KPIMetrics,
+  type MonthlyDataPoint,
+} from "./financial-types";
+
+function toYearMonthKey(value: Date): string {
+  return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}`;
+}
+
+function formatMonthYearLabel(yearMonthKey: string): string {
+  const [yearText, monthText] = yearMonthKey.split("-");
+  const year = Number(yearText);
+  const month = Number(monthText) - 1;
+  return new Date(year, month, 1).toLocaleDateString("en-US", {
+    month: "short",
+    year: "numeric",
+  });
+}
+
+export function computeKPIs(movements: FinancialMovement[]): KPIMetrics {
+  const totalIncome = movements
+    .filter((m) => m.operation_type === "income")
+    .reduce((sum, m) => sum + m.amount, 0);
+
+  const totalOutcome = movements
+    .filter((m) => m.operation_type === "outcome")
+    .reduce((sum, m) => sum + m.amount, 0);
+
+  const profit = totalIncome - totalOutcome;
+  const profitPercent = totalIncome > 0 ? (profit / totalIncome) * 100 : 0;
+
+  return { totalIncome, totalOutcome, profit, profitPercent };
+}
+
+export function computeMonthlyData(
+  movements: FinancialMovement[],
+): MonthlyDataPoint[] {
+  const monthlyMap: Record<string, { income: number; outcome: number }> = {};
+
+  for (const m of movements) {
+    const yearMonthKey = toYearMonthKey(new Date(m.create_date));
+    if (!monthlyMap[yearMonthKey]) {
+      monthlyMap[yearMonthKey] = { income: 0, outcome: 0 };
+    }
+
+    if (m.operation_type === "income") {
+      monthlyMap[yearMonthKey].income += m.amount;
+    } else {
+      monthlyMap[yearMonthKey].outcome += m.amount;
+    }
+  }
+
+  return Object.keys(monthlyMap)
+    .sort()
+    .map((yearMonthKey) => {
+      const { income, outcome } = monthlyMap[yearMonthKey];
+      const profit = income - outcome;
+      const profitPercent = income > 0 ? (profit / income) * 100 : 0;
+      return {
+        month: formatMonthYearLabel(yearMonthKey),
+        income,
+        outcome,
+        profitPercent,
+      };
+    });
+}
+
+export function formatCurrency(value: number): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+export function formatPercent(value: number): string {
+  return `${value.toFixed(1)}%`;
+}
+
+
+
+================================================
+FILE: frontend/src/lib/mock-data.ts
+================================================
+import { type FinancialMovement } from './financial-types'
+
+export const mockMovements: FinancialMovement[] = [
+  // January
+  { create_date: '2024-01-05', amount: 48200, operation_type: 'income', category: 'sales', business_type: 'B2B' },
+  { create_date: '2024-01-08', amount: 12400, operation_type: 'income', category: 'sales', business_type: 'B2C' },
+  { create_date: '2024-01-12', amount: 18500, operation_type: 'outcome', category: 'suppliers', business_type: 'B2B' },
+  { create_date: '2024-01-18', amount: 6300, operation_type: 'outcome', category: 'operational', business_type: 'B2B' },
+  { create_date: '2024-01-22', amount: 3200, operation_type: 'outcome', category: 'administrative', business_type: 'B2B' },
+  // February
+  { create_date: '2024-02-03', amount: 52800, operation_type: 'income', category: 'sales', business_type: 'B2B' },
+  { create_date: '2024-02-10', amount: 9100, operation_type: 'income', category: 'others', business_type: 'B2C' },
+  { create_date: '2024-02-14', amount: 21000, operation_type: 'outcome', category: 'suppliers', business_type: 'B2B' },
+  { create_date: '2024-02-20', amount: 5800, operation_type: 'outcome', category: 'operational', business_type: 'B2B' },
+  { create_date: '2024-02-25', amount: 4100, operation_type: 'outcome', category: 'administrative', business_type: 'B2C' },
+  // March
+  { create_date: '2024-03-06', amount: 67400, operation_type: 'income', category: 'sales', business_type: 'B2B' },
+  { create_date: '2024-03-11', amount: 14200, operation_type: 'income', category: 'sales', business_type: 'B2C' },
+  { create_date: '2024-03-15', amount: 24500, operation_type: 'outcome', category: 'suppliers', business_type: 'B2B' },
+  { create_date: '2024-03-19', amount: 7200, operation_type: 'outcome', category: 'operational', business_type: 'B2B' },
+  { create_date: '2024-03-27', amount: 3900, operation_type: 'outcome', category: 'administrative', business_type: 'B2B' },
+  // April
+  { create_date: '2024-04-04', amount: 58900, operation_type: 'income', category: 'sales', business_type: 'B2B' },
+  { create_date: '2024-04-09', amount: 11800, operation_type: 'income', category: 'sales', business_type: 'B2C' },
+  { create_date: '2024-04-13', amount: 22300, operation_type: 'outcome', category: 'suppliers', business_type: 'B2B' },
+  { create_date: '2024-04-21', amount: 6100, operation_type: 'outcome', category: 'operational', business_type: 'B2B' },
+  { create_date: '2024-04-28', amount: 4500, operation_type: 'outcome', category: 'others', business_type: 'B2C' },
+  // May
+  { create_date: '2024-05-05', amount: 71200, operation_type: 'income', category: 'sales', business_type: 'B2B' },
+  { create_date: '2024-05-12', amount: 16300, operation_type: 'income', category: 'sales', business_type: 'B2C' },
+  { create_date: '2024-05-16', amount: 28700, operation_type: 'outcome', category: 'suppliers', business_type: 'B2B' },
+  { create_date: '2024-05-22', amount: 8400, operation_type: 'outcome', category: 'operational', business_type: 'B2B' },
+  { create_date: '2024-05-29', amount: 5200, operation_type: 'outcome', category: 'administrative', business_type: 'B2B' },
+  // June
+  { create_date: '2024-06-03', amount: 64500, operation_type: 'income', category: 'sales', business_type: 'B2B' },
+  { create_date: '2024-06-10', amount: 13700, operation_type: 'income', category: 'others', business_type: 'B2C' },
+  { create_date: '2024-06-17', amount: 25900, operation_type: 'outcome', category: 'suppliers', business_type: 'B2B' },
+  { create_date: '2024-06-24', amount: 7600, operation_type: 'outcome', category: 'operational', business_type: 'B2B' },
+  // July
+  { create_date: '2024-07-02', amount: 78900, operation_type: 'income', category: 'sales', business_type: 'B2B' },
+  { create_date: '2024-07-08', amount: 18100, operation_type: 'income', category: 'sales', business_type: 'B2C' },
+  { create_date: '2024-07-15', amount: 31200, operation_type: 'outcome', category: 'suppliers', business_type: 'B2B' },
+  { create_date: '2024-07-22', amount: 9100, operation_type: 'outcome', category: 'operational', business_type: 'B2B' },
+  { create_date: '2024-07-30', amount: 5800, operation_type: 'outcome', category: 'administrative', business_type: 'B2B' },
+  // August
+  { create_date: '2024-08-06', amount: 72400, operation_type: 'income', category: 'sales', business_type: 'B2B' },
+  { create_date: '2024-08-13', amount: 15600, operation_type: 'income', category: 'sales', business_type: 'B2C' },
+  { create_date: '2024-08-19', amount: 27800, operation_type: 'outcome', category: 'suppliers', business_type: 'B2B' },
+  { create_date: '2024-08-26', amount: 8200, operation_type: 'outcome', category: 'operational', business_type: 'B2B' },
+  // September
+  { create_date: '2024-09-04', amount: 84100, operation_type: 'income', category: 'sales', business_type: 'B2B' },
+  { create_date: '2024-09-11', amount: 19500, operation_type: 'income', category: 'sales', business_type: 'B2C' },
+  { create_date: '2024-09-17', amount: 33600, operation_type: 'outcome', category: 'suppliers', business_type: 'B2B' },
+  { create_date: '2024-09-23', amount: 9800, operation_type: 'outcome', category: 'operational', business_type: 'B2B' },
+  { create_date: '2024-09-30', amount: 6200, operation_type: 'outcome', category: 'administrative', business_type: 'B2B' },
+  // October
+  { create_date: '2024-10-07', amount: 91300, operation_type: 'income', category: 'sales', business_type: 'B2B' },
+  { create_date: '2024-10-14', amount: 22700, operation_type: 'income', category: 'sales', business_type: 'B2C' },
+  { create_date: '2024-10-21', amount: 36400, operation_type: 'outcome', category: 'suppliers', business_type: 'B2B' },
+  { create_date: '2024-10-28', amount: 10600, operation_type: 'outcome', category: 'operational', business_type: 'B2B' },
+  // November
+  { create_date: '2024-11-05', amount: 87600, operation_type: 'income', category: 'sales', business_type: 'B2B' },
+  { create_date: '2024-11-12', amount: 21400, operation_type: 'income', category: 'sales', business_type: 'B2C' },
+  { create_date: '2024-11-19', amount: 34100, operation_type: 'outcome', category: 'suppliers', business_type: 'B2B' },
+  { create_date: '2024-11-26', amount: 10200, operation_type: 'outcome', category: 'operational', business_type: 'B2B' },
+  { create_date: '2024-11-30', amount: 7100, operation_type: 'outcome', category: 'administrative', business_type: 'B2B' },
+  // December
+  { create_date: '2024-12-03', amount: 96800, operation_type: 'income', category: 'sales', business_type: 'B2B' },
+  { create_date: '2024-12-10', amount: 25200, operation_type: 'income', category: 'sales', business_type: 'B2C' },
+  { create_date: '2024-12-17', amount: 38900, operation_type: 'outcome', category: 'suppliers', business_type: 'B2B' },
+  { create_date: '2024-12-23', amount: 11400, operation_type: 'outcome', category: 'operational', business_type: 'B2B' },
+  { create_date: '2024-12-30', amount: 8600, operation_type: 'outcome', category: 'administrative', business_type: 'B2B' },
+]
+
+
+
+================================================
+FILE: frontend/src/lib/utils.ts
+================================================
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
+
+
+================================================
+FILE: memory-bank/productContext.md
+================================================
+# Product Context - Financial Dashboard
+
+## 1. Problem Statement & Purpose
+- La aplicacion busca ofrecer una vista ejecutiva de metricas financieras en una interfaz web unica, mostrando KPIs de ingresos/egresos, utilidad y margen de utilidad.
+- Segun el codigo del frontend, el flujo principal es consumir movimientos financieros desde el backend y transformarlos en indicadores y series mensuales para visualizacion.
+- Segun el backend, el sistema expone endpoints de metricas, resumenes, comparativas y alertas para habilitar analisis financiero basico.
+
+## 2. Core User Workflows & Features
+- Carga inicial del dashboard:
+  - El frontend ejecuta `GET /api/metrics` al montar la app y calcula KPIs y datos mensuales para los graficos.
+- Visualizacion de indicadores clave:
+  - Tarjetas con total income, total outcome, profit y profit margin.
+- Visualizacion de tendencias:
+  - Grafico de lineas Income vs Outcome por mes.
+  - Grafico de Profit Margin % por mes.
+- Respuesta ante fallo de API:
+  - Si la carga falla, se muestra un mensaje de error en la UI.
+- Capacidades API disponibles en backend (aunque no todas conectadas en UI actual):
+  - `/api/metrics`, `/api/metrics/facets`, `/api/metrics/summary`, `/api/metrics/categories/top`, `/api/metrics/comparison`, `/api/metrics/alerts`, `/api/metrics/b2b`, `/api/metrics/b2c`, `/health`.
+
+## 3. Target Audience & Business Value
+- Audiencia objetivo probable por evidencia funcional:
+  - Usuarios de negocio/operaciones que necesitan monitorear rendimiento financiero agregado.
+  - Equipos tecnicos o de datos que requieren una base API para analisis de metricas.
+- Valor de negocio actual:
+  - Entrega una lectura rapida del estado financiero con componentes visuales claros.
+  - Permite experimentar filtros y analitica desde API sin dependencia de una base de datos real.
+  - Sirve como base de handover y evolucion hacia un producto con datos persistentes y workflows mas avanzados.
+
+
+
+================================================
+FILE: memory-bank/progress.md
+================================================
+# Project Progress & Current Status
+
+## 1. Working Features (Implemented)
+- Frontend operativo con dashboard de una sola vista:
+  - Header de dashboard.
+  - Fila de KPIs (income, outcome, profit, profit margin).
+  - Dos graficos de linea (Income vs Outcome y Profit Margin %).
+  - Estado de carga (skeletons) y mensaje de error basico.
+- Flujo de datos frontend implementado:
+  - `GET /api/metrics` desde `App.tsx`.
+  - Transformaciones locales con `computeKPIs` y `computeMonthlyData`.
+- Backend API implementada y tipada:
+  - `GET /health`.
+  - `GET /api/metrics` con filtros por fecha, categoria y tipo de operacion.
+  - `GET /api/metrics/facets`.
+  - `GET /api/metrics/summary`.
+  - `GET /api/metrics/categories/top`.
+  - `GET /api/metrics/comparison`.
+  - `GET /api/metrics/alerts`.
+  - `GET /api/metrics/b2b` y `GET /api/metrics/b2c`.
+- Testing disponible:
+  - Backend: pruebas de endpoints y logica de filtros en `backend/tests/test_routes.py`.
+  - Frontend: pruebas de utilidades financieras en `frontend/src/lib/financial-utils.test.ts`.
+
+## 2. Known Gaps & Technical Debt
+- Datos simulados/mocked:
+  - Todos los endpoints de metricas dependen de `generate_mock_movements(seed=42)`; no hay persistencia real.
+- Integracion incompleta frontend-backend:
+  - La UI actual solo consume `/api/metrics`; el resto de endpoints no se utiliza desde la interfaz.
+- Riesgos de configuracion:
+  - CORS abierto con `allow_origins=["*"]` y `allow_credentials=True`.
+- Riesgos de arquitectura/mantenibilidad:
+  - Duplicacion de logica en endpoints `/api/metrics/b2b` y `/api/metrics/b2c`.
+  - `random.seed()` en flujo de request, con posible impacto por estado global compartido.
+- UX y consistencia:
+  - Label de periodo hardcodeado (`2024 - Full Year`) puede no coincidir con el rango real generado por backend.
+  - Manejo de errores frontend generico, sin clasificacion de causa.
+- Escalabilidad y calidad:
+  - Falta paginacion en respuestas de colecciones.
+  - Cobertura de pruebas centrada en happy paths; faltan mas casos negativos y de bordes.
+
+## 3. Next Priorities
+- Prioridad 1: endurecer seguridad/configuracion.
+  - Parametrizar CORS por entorno y remover combinaciones inseguras para produccion.
+- Prioridad 2: mejorar arquitectura backend.
+  - Extraer servicios compartidos para eliminar duplicacion de endpoints segmentados.
+  - Reemplazar uso de `random.seed()` global por RNG local/inyectable.
+- Prioridad 3: mejorar contrato API para crecimiento.
+  - Introducir paginacion (`limit`/`offset` o cursor) en endpoints de listas.
+- Prioridad 4: cerrar brecha de producto en frontend.
+  - Integrar endpoints de summary/facets/comparison/alerts en UI.
+  - Derivar periodo mostrado desde datos reales y mejorar estrategia de errores.
+- Prioridad 5: elevar cobertura de pruebas.
+  - Agregar pruebas negativas y de validacion para endpoints y clientes.
+
+
+
+================================================
+FILE: memory-bank/techContext.md
+================================================
+# Technical Context & Stack - Financial Dashboard
+
+## 1. Tech Stack Overview
+- **Frontend:** React 19 + TypeScript sobre Vite.
+  - Gestor de estado: estado local con `useState` y `useEffect` (sin Redux/Zustand).
+  - UI/Charts: Tailwind CSS v4, componentes estilo shadcn, `lucide-react`, `recharts`.
+  - Cliente HTTP: `fetch` nativo del navegador en `App.tsx`.
+- **Backend:** Python + FastAPI.
+  - API framework: FastAPI con `APIRouter`.
+  - Validacion y contratos: Pydantic (`BaseModel`) y tipos `Literal`.
+  - Base de datos: no hay conectores ni ORM; datos mock generados en memoria.
+- **Infraestructura & Tooling:** Docker y Docker Compose.
+  - `docker-compose.yml` levanta `frontend` y `backend`.
+  - Frontend usa proxy de Vite (`/api` -> `http://backend:8000`).
+  - Variable opcional de entorno frontend: `VITE_API_BASE_URL` (`frontend/.env.example`).
+  - Build/ejecucion frontend con scripts npm y backend con uvicorn + debugpy en contenedor.
+
+## 2. Key Dependencies
+- Frontend (`frontend/package.json`):
+  - Runtime: `react`, `react-dom`, `recharts`, `lucide-react`, `clsx`, `class-variance-authority`, `tailwind-merge`.
+  - Dev/build/test: `vite`, `@vitejs/plugin-react`, `typescript`, `eslint`, `typescript-eslint`, `vitest`, `@vitest/coverage-v8`, `tailwindcss`, `@tailwindcss/vite`, `postcss`, `autoprefixer`.
+- Backend (`backend/requirements.txt`):
+  - `fastapi`, `uvicorn[standard]`, `debugpy`, `pytest`, `pytest-cov`, `httpx`.
+
+## 3. Local Development Setup
+- Opcion recomendada (repositorio):
+  1. Ejecutar `docker compose up --build` desde la raiz.
+  2. Acceder a frontend en `http://localhost:5173`.
+  3. Acceder a backend en `http://localhost:8000`.
+  4. Acceder a docs de API en `http://localhost:8000/docs`.
+- Notas de entorno:
+  - En local, el frontend usa proxy Vite para `/api` por defecto.
+  - Solo si se necesita otro origen backend: copiar `frontend/.env.example` a `.env` y definir `VITE_API_BASE_URL`.
+- Comandos utiles del frontend (si se ejecuta fuera de Docker):
+  - `npm run dev`, `npm run build`, `npm run test`, `npm run lint`.
+
+
+
+================================================
+FILE: .agents/rules/api-collection-pagination.md
+================================================
+# Rule: Paginate Collection Endpoints
+
+## Scope
+- /backend/app/routes.py endpoints returning list payloads
+- Frontend consumers of list endpoints under /frontend/src
+
+## Rationale
+- Returning unbounded collections from API endpoints does not scale and can degrade response time and frontend performance.
+
+## Standard & Guidelines
+- Any collection endpoint must support limit and offset (or cursor).
+- Enforce backend bounds with Query validators (for example ge and le).
+- Frontend requests must explicitly pass pagination parameters instead of assuming full dumps.
+
+## Examples
+
+### ❌ Incorrect (Don't)
+```python
+@router.get("/api/metrics", response_model=list[FinancialMovement])
+def get_metrics(...):
+    movements = generate_mock_movements(seed=42)
+    filtered = filter_movements(movements, start_date, end_date, category, operation_type)
+    return ensure_chronological_order(filtered)
+```
+
+### ✅ Correct (Do)
+```python
+@router.get("/api/metrics", response_model=list[FinancialMovement])
+def get_metrics(
+    ...,
+    limit: int = Query(default=100, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
+) -> list[FinancialMovement]:
+    movements = generate_mock_movements(seed=42)
+    filtered = ensure_chronological_order(
+        filter_movements(movements, start_date, end_date, category, operation_type)
+    )
+    return filtered[offset : offset + limit]
+```
+
+
+
+================================================
+FILE: .agents/rules/backend-endpoint-composition.md
+================================================
+# Rule: Reuse Endpoint Filtering Logic Through Shared Service Functions
+
+## Scope
+- /backend/app/routes.py
+- Backend metric endpoints under /api/metrics*
+
+## Rationale
+- The b2b and b2c endpoints duplicate filtering and response assembly logic. Duplication increases maintenance effort and causes behavior drift.
+
+## Standard & Guidelines
+- Extract reusable query/filter pipeline into one internal function.
+- Keep endpoint handlers thin: validate inputs, call service, return response model.
+- Avoid copy-pasting loops and filter pipelines across endpoints.
+
+## Examples
+
+### ❌ Incorrect (Don't)
+```python
+@router.get("/api/metrics/b2b")
+def get_b2b_metrics(...):
+    movements = [m for m in generate_mock_movements(seed=42) if m.business_type == "B2B"]
+    filtered = filter_movements(movements, start_date, end_date, category, operation_type)
+    return ensure_chronological_order(filtered)
+
+@router.get("/api/metrics/b2c")
+def get_b2c_metrics(...):
+    movements = [m for m in generate_mock_movements(seed=42) if m.business_type == "B2C"]
+    filtered = filter_movements(movements, start_date, end_date, category, operation_type)
+    return ensure_chronological_order(filtered)
+```
+
+### ✅ Correct (Do)
+```python
+def get_metrics_by_business_type(
+    business_type: BusinessType,
+    start_date: date | None,
+    end_date: date | None,
+    category: Category | None,
+    operation_type: OperationType | None,
+) -> list[FinancialMovement]:
+    base = [m for m in generate_mock_movements(seed=42) if m.business_type == business_type]
+    return ensure_chronological_order(filter_movements(base, start_date, end_date, category, operation_type))
+```
+
+
+
+================================================
+FILE: .agents/rules/backend-randomness-and-state.md
+================================================
+# Rule: No Global Mutable Random State in Request Flow
+
+## Scope
+- /backend/app/routes.py
+- Any future backend service used by API endpoints
+
+## Rationale
+- Re-seeding the global random module inside request paths creates hidden coupling between calls and can break determinism under concurrency.
+
+## Standard & Guidelines
+- Do not call random.seed inside endpoint request flow.
+- Use a local random.Random instance and pass it through helper functions.
+- Keep deterministic behavior explicit through dependency injection (seed or RNG object).
+
+## Examples
+
+### ❌ Incorrect (Don't)
+```python
+def generate_mock_movements(seed: int | None = None) -> list[FinancialMovement]:
+    if seed is not None:
+        random.seed(seed)
+    # ... uses global random afterwards
+```
+
+### ✅ Correct (Do)
+```python
+def generate_mock_movements(seed: int | None = None) -> list[FinancialMovement]:
+    rng = random.Random(seed)
+    today = date.today()
+    movements: list[FinancialMovement] = []
+    for month in range(1, 13):
+        income_probability = rng.uniform(0.45, 0.7)
+        for _ in range(30):
+            movements.append(_build_movement(month, income_probability, today, rng))
+    movements.sort(key=lambda item: item.create_date)
+    return movements
+```
+
+
+
+================================================
+FILE: .agents/rules/frontend-error-handling.md
+================================================
+# Rule: Structured Frontend API Error Handling
+
+## Scope
+- /frontend/src/App.tsx
+- Any future API client module in /frontend/src/lib
+
+## Rationale
+- Current error handling collapses all failures into one generic message and drops actionable diagnostics.
+
+## Standard & Guidelines
+- Distinguish HTTP, network, timeout, and parsing errors.
+- Preserve error context for logging while showing user-friendly messages.
+- Never swallow error reasons in catch blocks.
+
+## Examples
+
+### ❌ Incorrect (Don't)
+```typescript
+fetchFinancialData()
+  .then((movements) => {
+    setMetrics(computeKPIs(movements))
+  })
+  .catch(() => {
+    setError("No se pudo cargar la informacion financiera. Revisa la API de backend.")
+  })
+```
+
+### ✅ Correct (Do)
+```typescript
+fetchFinancialData()
+  .then((movements) => {
+    setMetrics(computeKPIs(movements))
+  })
+  .catch((err: unknown) => {
+    if (err instanceof TypeError) {
+      setError("No hay conexion con el backend.")
+      return
+    }
+
+    if (err instanceof Error && err.message.includes("Failed to fetch financial data")) {
+      setError("La API respondio con error. Revisa estado y logs.")
+      return
+    }
+
+    setError("Ocurrio un error inesperado al cargar los datos.")
+    console.error("financial-data-load-error", err)
+  })
+```
+
+
+
+================================================
+FILE: .agents/rules/frontend-period-consistency.md
+================================================
+# Rule: UI Period Labels Must Come From Data, Not Hardcoded Strings
+
+## Scope
+- /frontend/src/App.tsx
+- /frontend/src/components/dashboard/dashboard-header.tsx
+
+## Rationale
+- Hardcoded business periods can diverge from backend-generated ranges, causing misleading dashboards.
+
+## Standard & Guidelines
+- Derive displayed period from API data range or backend metadata endpoint.
+- If the range is unknown, show a neutral fallback instead of a fixed year.
+- Keep period formatting centralized in a utility function.
+
+## Examples
+
+### ❌ Incorrect (Don't)
+```tsx
+<DashboardHeader period="2024 - Full Year" />
+```
+
+### ✅ Correct (Do)
+```tsx
+const periodLabel = monthlyData.length
+  ? `${monthlyData[0].month} - ${monthlyData[monthlyData.length - 1].month}`
+  : "Periodo no disponible"
+
+<DashboardHeader period={periodLabel} />
+```
+
+
+
+================================================
+FILE: .agents/rules/security-cors.md
+================================================
+# Rule: Environment-Safe CORS Configuration
+
+## Scope
+- /backend/app/main.py
+- Any backend runtime configuration that sets CORS behavior
+
+## Rationale
+- The current backend sets allow_origins with wildcard and enables credentials. This pattern is unsafe for production and can expose authenticated resources to unintended origins.
+
+## Standard & Guidelines
+- Define CORS origins by environment.
+- In production, never use wildcard origins when credentials are enabled.
+- Keep local development permissive only when explicitly gated by environment.
+- Document allowed origins in deployment configuration.
+
+## Examples
+
+### ❌ Incorrect (Don't)
+```python
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
+
+### ✅ Correct (Do)
+```python
+allowed_origins = [
+    "https://dashboard.example.com",
+    "https://admin.example.com",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["GET"],
+    allow_headers=["Authorization", "Content-Type"],
+)
+```
+
+
+
+================================================
+FILE: .agents/rules/testing-negative-cases.md
+================================================
+# Rule: Include Negative and Boundary Test Cases for Every Endpoint
+
+## Scope
+- /backend/tests/*.py
+- /frontend/src/**/*.test.ts
+
+## Rationale
+- Current tests are strong for happy paths but sparse on invalid inputs and edge conditions, leaving contract regressions undetected.
+
+## Standard & Guidelines
+- Every endpoint must have tests for invalid query values, boundary conditions, and error status codes.
+- For each new filter parameter, add at least one failing/invalid case.
+- Frontend data utilities must include edge cases (empty arrays, malformed dates, zero denominators).
+
+## Examples
+
+### ❌ Incorrect (Don't)
+```python
+def test_metrics_summary_by_week_honors_business_type_filter():
+    response = client.get(
+        "/api/metrics/summary",
+        params={"group_by": "week", "business_type": "B2C"},
+    )
+    assert response.status_code == 200
+```
+
+### ✅ Correct (Do)
+```python
+def test_top_categories_rejects_limit_above_max():
+    response = client.get(
+        "/api/metrics/categories/top",
+        params={"operation_type": "outcome", "limit": 999},
+    )
+    assert response.status_code == 422
+```
+
+
+
+================================================
+FILE: .agents/rules/typed-contract-alignment.md
+================================================
+# Rule: Keep Frontend and Backend Data Contracts Synchronized
+
+## Scope
+- /backend/app/routes.py
+- /frontend/src/lib/financial-types.ts
+- Any API-consuming component in /frontend/src
+
+## Rationale
+- The project relies on strong typing; drift between backend response models and frontend types creates integration bugs that are avoidable.
+
+## Standard & Guidelines
+- Any change to backend response model fields must be mirrored in frontend types in the same PR.
+- API responses must remain semantically aligned (names, value domains, nullability).
+- Add or update tests when contracts change.
+
+## Examples
+
+### ❌ Incorrect (Don't)
+```typescript
+export interface FinancialMovement {
+  create_date: string
+  amount: number
+  operation_type: "income" | "outcome"
+  // missing backend field business_type
+}
+```
+
+### ✅ Correct (Do)
+```typescript
+export interface FinancialMovement {
+  create_date: string
+  amount: number
+  operation_type: "income" | "outcome"
+  category: "suppliers" | "sales" | "operational" | "administrative" | "others"
+  business_type: "B2B" | "B2C"
+}
+```
+
+
