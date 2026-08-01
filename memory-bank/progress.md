@@ -55,3 +55,13 @@
 
 ### Habilidad Adicional: Performance (`addyosmani/web-quality-skills@performance`)
 * **Justificación:** Los dashboards financieros manejan constantes renderizados de datos y gráficos interactivos. La habilidad de rendimiento nos ayuda a identificar re-renders innecesarios, optimizar la carga de módulos pesados y garantizar métricas sólidas de Core Web Vitals en la interfaz.
+
+## Agent Skills Applied
+
+### Skills Installed & Applied
+1. **`accessibility`**: Auditado para corregir atributos `aria-label`, navegación por teclado y contraste.
+2. **`vercel-react-best-practices`**: Aplicada la optimización de componentes y metadatos.
+3. **`performance` (Custom choice)**: Instalada para optimizar los re-renders de los gráficos del dashboard.
+
+### Custom Skill Created
+- **`financial-formatting`**: Creada en `.skills/financial-formatting/SKILL.md` para estandarizar el formato de divisas (USD), colores de ganancias/pérdidas y fechas.
